@@ -1,0 +1,1069 @@
+{
+    "swagger": "2.0",
+    "info": {  
+        "description": "Project to manage information about fields, tractors and processed fields",
+        "version": "1.0.0",
+        "title": "Manage Agriculture Field",
+        "contact": {  
+            "email": "deepakms001@yahoo.com"
+        }
+    },
+    "host": "localhost:8000",
+    "basePath": "",
+    "tags": [  
+        {  
+            "name": "Auth",
+            "description": "Authenticate with JWT token"
+        },
+        {  
+            "name": "Crops",
+            "description": "Manage crops"
+        },
+        {  
+            "name": "Tractors",
+            "description": "Manage tractors"
+        },
+        {  
+            "name": "Fields",
+            "description": "Manage field"
+        },
+        {  
+            "name": "Process Fields",
+            "description": "Field processing"
+        },
+        {  
+            "name": "Reports",
+            "description": "Reports on field processing"
+        }
+    ],
+    "schemes": [  
+        "http"
+    ],
+    "paths": {  
+        "/auth/login": {  
+            "post": {  
+                "tags": ["Auth"],
+                "summary": "Authenticate with the API Service",
+                "description": "",
+                "operationId": "login",
+                "parameters": [  
+                    {  
+                        "in": "formData",
+                        "name": "email",
+                        "description": "User email",
+                        "type": "string",
+                        "required": true
+                    },
+                    {  
+                        "in": "formData",
+                        "name": "password",
+                        "description": "User password",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {  
+                    "200": {  
+                        "description": "Successful login",
+                        "schema": {  
+                            "status": {  
+                                "type": "string"
+                            },
+                            "data": {
+                                "type": "array",
+                                "crop": {  
+                                    "$ref": "#/definitions/token"
+                                }
+                            }
+                        }
+                    },
+                    "422": {  
+                        "description": "Unprocessable Entity",
+                        "schema": {  
+                            "$ref": "#/definitions/token"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "error": "Email does not exist."
+                        }
+                    }
+                }
+            }
+        },
+        "/crops": {  
+            "get": {  
+                "tags": [  
+                    "Crops"
+                ],
+                "summary": "Get all crops",
+                "description": "Get all crops list",
+                "operationId": "/allCrops",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from authentication API ",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "200": {  
+                        "description": "successful operation",
+                        "schema": {  
+                            "type": "array",
+                            "items": {  
+                                "$ref": "#/definitions/Pet"
+                            }
+                        }
+                    },
+                    "400": {  
+                        "description": "Provided token is expired",
+                        "schema": {  
+                            "type": "object",
+                            "items": {
+                                "status": "error",
+                                "message": "Provided token is expired"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {  
+                "tags": [  
+                    "Crops"
+                ],
+                "summary": "Add a crop",
+                "description": "",
+                "operationId": "add",
+                "consumes": [  
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Name of the crop",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token optained from auth API",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "405": {  
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/crops/update": {
+            "post": {  
+                "tags": [  
+                    "Crops"
+                ],
+                "summary": "Update a crop",
+                "description": "",
+                "operationId": "update",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "id",
+                        "in": "formData",
+                        "description": "ID of crop to update",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Updated name of crop",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/crops/{cropId}": {
+            "delete": {  
+                "tags": [  
+                    "Crops"
+                ],
+                "summary": "Delete a crop",
+                "description": "",
+                "operationId": "delete",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "cropId",
+                        "in": "path",
+                        "description": "ID of crop to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/tractors": {  
+            "get": {  
+                "tags": [  
+                    "Tractors"
+                ],
+                "summary": "Get all tractors",
+                "description": "Get all tractor list",
+                "operationId": "/allTractors",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from authentication API ",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "200": {  
+                        "description": "successful operation",
+                        "schema": {  
+                            "type": "array",
+                            "items": {  
+                                "$ref": "#/definitions/Pet"
+                            }
+                        }
+                    },
+                    "400": {  
+                        "description": "Provided token is expired",
+                        "schema": {  
+                            "type": "object",
+                            "items": {
+                                "status": "error",
+                                "message": "Provided token is expired"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {  
+                "tags": [  
+                    "Tractors"
+                ],
+                "summary": "Add a Tractor",
+                "description": "",
+                "operationId": "addTractor",
+                "consumes": [  
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Name of the Tractor",
+                        "required": true,
+                        "type": "string"
+                    }, {  
+                        "name": "reg_number",
+                        "in": "formData",
+                        "description": "UID of the Tractor",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token optained from auth API",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "405": {  
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/tractors/update": {
+            "post": {  
+                "tags": [  
+                    "Tractors"
+                ],
+                "summary": "Update a tractor",
+                "description": "",
+                "operationId": "updateTractor",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "tractorId",
+                        "in": "formData",
+                        "description": "ID of tractor to update",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Updated name of tractor",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "reg_number",
+                        "in": "formData",
+                        "description": "Updated UID of tractor",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/tractors/{tractorId}": {
+            "delete": {  
+                "tags": [  
+                    "Tractors"
+                ],
+                "summary": "Delete a tractor",
+                "description": "",
+                "operationId": "deleteTractor",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "tractorId",
+                        "in": "path",
+                        "description": "ID of tractor to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+
+        "/fields": {  
+            "get": {  
+                "tags": [  
+                    "Fields"
+                ],
+                "summary": "Get all process fields requests",
+                "description": "Get the list of process fields requests",
+                "operationId": "/allFields",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from authentication API ",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "200": {  
+                        "description": "successful operation",
+                        "schema": {  
+                            "type": "array",
+                            "items": {  
+                                "$ref": "#/definitions/Pet"
+                            }
+                        }
+                    },
+                    "400": {  
+                        "description": "Provided token is expired",
+                        "schema": {  
+                            "type": "object",
+                            "items": {
+                                "status": "error",
+                                "message": "Provided token is expired"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {  
+                "tags": [  
+                    "Fields"
+                ],
+                "summary": "Add a field",
+                "description": "",
+                "operationId": "addField",
+                "consumes": [  
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Name of the field",
+                        "required": true,
+                        "type": "string"
+                    }, {  
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "Can only be set by admin. Customers need not set this value.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token optained from auth API",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "405": {  
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/fields/update": {
+            "post": {  
+                "tags": [  
+                    "Fields"
+                ],
+                "summary": "Update a field",
+                "description": "",
+                "operationId": "updateField",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "tractorId",
+                        "in": "formData",
+                        "description": "ID of field to update",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Updated name of field",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "Updated user_id of field. User ID can only be updated by admin",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/fields/{fieldId}": {
+            "delete": {  
+                "tags": [  
+                    "Fields"
+                ],
+                "summary": "Delete a field",
+                "description": "",
+                "operationId": "deleteField",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "tractorId",
+                        "in": "path",
+                        "description": "ID of field to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+
+        "/process-fields": {  
+            "get": {  
+                "tags": [  
+                    "Process Fields"
+                ],
+                "summary": "Get all fields",
+                "description": "Get all fields list",
+                "operationId": "/allProcessFields",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from authentication API ",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {  
+                    "200": {  
+                        "description": "successful operation",
+                        "schema": {  
+                            "type": "array",
+                            "items": {  
+                                "$ref": "#/definitions/Pet"
+                            }
+                        }
+                    },
+                    "400": {  
+                        "description": "Provided token is expired",
+                        "schema": {  
+                            "type": "object",
+                            "items": {
+                                "status": "error",
+                                "message": "Provided token is expired"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {  
+                "tags": [  
+                    "Process Fields"
+                ],
+                "summary": "Add a process field request",
+                "description": "",
+                "operationId": "addProcessField",
+                "consumes": [  
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "date",
+                        "in": "formData",
+                        "description": "Date of processing",
+                        "required": true,
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {  
+                        "name": "field_id",
+                        "in": "formData",
+                        "description": "Updated field_id of process field request. Customers can only change if the own the field.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "tractor_id",
+                        "in": "formData",
+                        "description": "Updated tractor_id of process field request.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "405": {  
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/process-fields/update": {
+            "post": {  
+                "tags": [  
+                    "Process Fields"
+                ],
+                "summary": "Update a process field request",
+                "description": "",
+                "operationId": "updateProcessField",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "id",
+                        "in": "formData",
+                        "description": "Id of process field request",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "date",
+                        "in": "formData",
+                        "description": "Date of processing",
+                        "required": true,
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {  
+                        "name": "field_id",
+                        "in": "formData",
+                        "description": "Updated field_id of process field request. Customers can only change if the own the field.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "tractor_id",
+                        "in": "formData",
+                        "description": "Updated tractor_id of process field request.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/process-fields/{fieldId}": {
+            "delete": {  
+                "tags": [  
+                    "Process Fields"
+                ],
+                "summary": "Delete a field",
+                "description": "",
+                "operationId": "deletePF",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "processFieldId",
+                        "in": "path",
+                        "description": "ID of process field request to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },    
+        "/reports": {
+            "post": {  
+                "tags": [  
+                    "Reports"
+                ],
+                "summary": "Generate reports",
+                "description": "",
+                "operationId": "reports",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "query",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "field_name",
+                        "in": "path",
+                        "description": "Name of the field",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "field_name",
+                        "in": "path",
+                        "description": "Name of the field",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "culture",
+                        "in": "path",
+                        "description": "Crop name",
+                        "required": false,
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {  
+                        "name": "start_date",
+                        "in": "path",
+                        "description": "Processing happened on or after this date",
+                        "required": false,
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {  
+                        "name": "end_date",
+                        "in": "path",
+                        "description": "Processing happened on or before this date",
+                        "required": false,
+                        "type": "integer",
+                        "format": "date"
+                    }
+                ],
+                "responses": {  
+                    "400": {  
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {  
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {  
+
+        "token": {  
+            "type": "apiKey",
+            "name": "token",
+            "in": "query"
+        }
+    },
+    "definitions": {  
+        "token": {
+            "type": "object",
+            "properties": {  
+                "token": {  
+                    "type": "string"
+                }
+            }
+        },  
+        "Crop": {
+            "crop": {  
+                "name": "photoUrl",
+                "wrapped": true
+            }
+        },
+        "Order": {  
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "petId": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "quantity": {  
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "shipDate": {  
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "status": {  
+                    "type": "string",
+                    "description": "Order Status",
+                    "enum": [  
+                        "placed",
+                        "approved",
+                        "delivered"
+                    ]
+                },
+                "complete": {  
+                    "type": "boolean",
+                    "default": false
+                }
+            },
+            "xml": {  
+                "name": "Order"
+            }
+        },
+        "User": {  
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "username": {  
+                    "type": "string"
+                },
+                "firstName": {  
+                    "type": "string"
+                },
+                "lastName": {  
+                    "type": "string"
+                },
+                "email": {  
+                    "type": "string"
+                },
+                "password": {  
+                    "type": "string"
+                },
+                "phone": {  
+                    "type": "string"
+                },
+                "userStatus": {  
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "User Status"
+                }
+            },
+            "xml": {  
+                "name": "User"
+            }
+        },
+        "Category": {  
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {  
+                    "type": "string"
+                }
+            },
+            "xml": {  
+                "name": "Category"
+            }
+        },
+        "Tag": {  
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {  
+                    "type": "string"
+                }
+            },
+            "xml": {  
+                "name": "Tag"
+            }
+        },
+        "Pet": {  
+            "type": "object",
+            "required": [  
+                "name",
+                "photoUrls"
+            ],
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "category": {  
+                    "$ref": "#/definitions/Category"
+                },
+                "name": {  
+                    "type": "string",
+                    "example": "doggie"
+                },
+                "photoUrls": {  
+                    "type": "array",
+                    "xml": {  
+                        "name": "photoUrl",
+                        "wrapped": true
+                    },
+                    "items": {  
+                        "type": "string"
+                    }
+                },
+                "tags": {  
+                    "type": "array",
+                    "xml": {  
+                        "name": "tag",
+                        "wrapped": true
+                    },
+                    "items": {  
+                        "$ref": "#/definitions/Tag"
+                    }
+                },
+                "status": {  
+                    "type": "string",
+                    "description": "pet status in the store",
+                    "enum": [  
+                        "available",
+                        "pending",
+                        "sold"
+                    ]
+                }
+            },
+            "xml": {  
+                "name": "Pet"
+            }
+        },
+        "ApiResponse": {  
+            "type": "object",
+            "properties": {  
+                "code": {  
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "type": {  
+                    "type": "string"
+                },
+                "message": {  
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "externalDocs": {  
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+    }
+}
