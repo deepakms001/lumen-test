@@ -79,7 +79,7 @@ php -S localhost:8000 -t public
 
 - Now the project is all setup and APIs will be available at [http://localhost:8000/](http://localhost:8000/)
 
-Swagger UI is available at [http://localhost:8000/swagger-ui/](http://localhost:8000/swagger-ui/)
+- Swagger UI is available at [http://localhost:8000/swagger-ui/](http://localhost:8000/swagger-ui/)
 
-Swagger JSON file is available at [http://localhost:8000/swagger-ui/swagger.json](http://localhost:8000/swagger-ui/swagger.json)
+- Swagger JSON file is available at [http://localhost:8000/swagger-ui/swagger.json](http://localhost:8000/swagger-ui/swagger.json)
 
