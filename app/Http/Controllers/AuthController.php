@@ -65,18 +65,22 @@ class AuthController extends BaseController
             // differents kind of responses. But let's return the 
             // below respose for now.
             return response()->json([
-                'error' => 'Email does not exist.'
+                'status'=>'error',
+                'message' => 'Email does not exist.'
             ], 400);
         }
         // Verify the password and generate the token
         if (Hash::check($this->request->input('password'), $user->password)) {
             return response()->json([
+                'status'=>'success',
+                'message' => 'Token generated successfully',
                 'token' => $this->jwt($user)
             ], 200);
         }
         // Bad Request response
         return response()->json([
-            'error' => 'Email or password is wrong.'
+            'status'=>'failed',
+            'message' => 'Email or password is wrong.'
         ], 400);
     }
 }

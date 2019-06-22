@@ -44,7 +44,7 @@ $router->group(['middleware' => ['jwt.auth']], function() use ($router) {
 
     //Admin and Supervisor APIs
     $router->group(['middleware' => ['isSupervisor']], function() use ($router) {
-        $router->post('process-fields/change-status', 'ProcessFieldsController@changeProcessFieldStatus');
+        $router->put('process-fields/{id}/{status}', 'ProcessFieldsController@changeProcessFieldStatus');
         $router->get('process-fields/{id}', 'ProcessFieldsController@getProcessFieldById');
         $router->delete('process-fields/{id}', 'ProcessFieldsController@deleteProcessField');
     });

@@ -8,8 +8,6 @@
             "email": "deepakms001@yahoo.com"
         }
     },
-    "host": "localhost:8000",
-    "basePath": "",
     "tags": [  
         {  
             "name": "Auth",
@@ -66,13 +64,17 @@
                     "200": {  
                         "description": "Successful login",
                         "schema": {  
-                            "status": {  
-                                "type": "string"
-                            },
-                            "data": {
-                                "type": "array",
-                                "crop": {  
-                                    "$ref": "#/definitions/token"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "token": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
                                 }
                             }
                         }
@@ -80,13 +82,31 @@
                     "422": {  
                         "description": "Unprocessable Entity",
                         "schema": {  
-                            "$ref": "#/definitions/token"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["error", "success", "failed"]
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     },
                     "400": {  
-                        "description": "Bad Request",
-                        "schema": {
-                            "error": "Email does not exist."
+                        "description": "Invalid credentials / Bad request",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["failed", "error", "success"]
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -116,20 +136,31 @@
                     "200": {  
                         "description": "successful operation",
                         "schema": {  
-                            "type": "array",
-                            "items": {  
-                                "$ref": "#/definitions/Pet"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {  
+                                        "$ref": "#/definitions/Crop"
+                                    }
+                                }
                             }
                         }
                     },
-                    "400": {  
-                        "description": "Provided token is expired",
+                    "401": {
+                        "description": "Unauthorized access",
                         "schema": {  
-                            "type": "object",
-                            "items": {
-                                "status": "error",
-                                "message": "Provided token is expired"
-                            }
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
                         }
                     }
                 }
@@ -138,7 +169,7 @@
                 "tags": [  
                     "Crops"
                 ],
-                "summary": "Add a crop",
+                "summary": "Add a crop - Only for Admin users",
                 "description": "",
                 "operationId": "add",
                 "consumes": [  
@@ -164,8 +195,32 @@
                     }
                 ],
                 "responses": {  
-                    "405": {  
-                        "description": "Invalid input"
+                    "200": {  
+                        "description": "Crop created",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Crop"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -175,7 +230,7 @@
                 "tags": [  
                     "Crops"
                 ],
-                "summary": "Update a crop",
+                "summary": "Update a crop - Only for Admin users",
                 "description": "",
                 "operationId": "update",
                 "produces": [  
@@ -206,11 +261,32 @@
                     }
                 ],
                 "responses": {  
-                    "400": {  
-                        "description": "Invalid ID supplied"
+                    "200": {  
+                        "description": "Crop updated",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Crop"
+                                }
+                            }
+                        }
                     },
-                    "404": {  
-                        "description": "Pet not found"
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -220,7 +296,7 @@
                 "tags": [  
                     "Crops"
                 ],
-                "summary": "Delete a crop",
+                "summary": "Delete a crop - Only for Admin users",
                 "description": "",
                 "operationId": "delete",
                 "produces": [  
@@ -244,11 +320,29 @@
                     }
                 ],
                 "responses": {  
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
                     "400": {  
-                        "description": "Invalid ID supplied"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     },
                     "404": {  
-                        "description": "Pet not found"
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "200": {
+                        "description": "Crop deleted",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMsg"
+                        }
                     }
                 }
             }
@@ -277,20 +371,31 @@
                     "200": {  
                         "description": "successful operation",
                         "schema": {  
-                            "type": "array",
-                            "items": {  
-                                "$ref": "#/definitions/Pet"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {  
+                                        "$ref": "#/definitions/Tractor"
+                                    }
+                                }
                             }
                         }
                     },
                     "400": {  
-                        "description": "Provided token is expired",
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
                         "schema": {  
-                            "type": "object",
-                            "items": {
-                                "status": "error",
-                                "message": "Provided token is expired"
-                            }
+                            "$ref": "#/definitions/ErrorMsg"
                         }
                     }
                 }
@@ -299,7 +404,7 @@
                 "tags": [  
                     "Tractors"
                 ],
-                "summary": "Add a Tractor",
+                "summary": "Add a Tractor - Only for Admin users",
                 "description": "",
                 "operationId": "addTractor",
                 "consumes": [  
@@ -331,8 +436,32 @@
                     }
                 ],
                 "responses": {  
-                    "405": {  
-                        "description": "Invalid input"
+                    "200": {  
+                        "description": "Tractor created",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Tractor"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -342,7 +471,7 @@
                 "tags": [  
                     "Tractors"
                 ],
-                "summary": "Update a tractor",
+                "summary": "Update a tractor - Only for Admin users",
                 "description": "",
                 "operationId": "updateTractor",
                 "produces": [  
@@ -357,7 +486,7 @@
                         "type": "string"
                     },
                     {  
-                        "name": "tractorId",
+                        "name": "id",
                         "in": "formData",
                         "description": "ID of tractor to update",
                         "required": true,
@@ -380,11 +509,32 @@
                     }
                 ],
                 "responses": {  
-                    "400": {  
-                        "description": "Invalid ID supplied"
+                    "200": {  
+                        "description": "Tractor updated",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Tractor"
+                                }
+                            }
+                        }
                     },
-                    "404": {  
-                        "description": "Pet not found"
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -394,7 +544,7 @@
                 "tags": [  
                     "Tractors"
                 ],
-                "summary": "Delete a tractor",
+                "summary": "Delete a tractor - Only for Admin users",
                 "description": "",
                 "operationId": "deleteTractor",
                 "produces": [  
@@ -418,11 +568,29 @@
                     }
                 ],
                 "responses": {  
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
                     "400": {  
-                        "description": "Invalid ID supplied"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     },
                     "404": {  
-                        "description": "Pet not found"
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "200": {
+                        "description": "Tractor deleted",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMsg"
+                        }
                     }
                 }
             }
@@ -452,20 +620,31 @@
                     "200": {  
                         "description": "successful operation",
                         "schema": {  
-                            "type": "array",
-                            "items": {  
-                                "$ref": "#/definitions/Pet"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {  
+                                        "$ref": "#/definitions/Field"
+                                    }
+                                }
                             }
                         }
                     },
                     "400": {  
-                        "description": "Provided token is expired",
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
                         "schema": {  
-                            "type": "object",
-                            "items": {
-                                "status": "error",
-                                "message": "Provided token is expired"
-                            }
+                            "$ref": "#/definitions/ErrorMsg"
                         }
                     }
                 }
@@ -491,11 +670,26 @@
                         "required": true,
                         "type": "string"
                     }, {  
+                        "name": "area",
+                        "in": "formData",
+                        "description": "Area of the field in square meters",
+                        "required": true,
+                        "type": "number"
+                    }, {  
                         "name": "user_id",
                         "in": "formData",
-                        "description": "Can only be set by admin. Customers need not set this value.",
+                        "description": "Can only be set by admin. Value is ignored if customer passes this value.",
                         "required": false,
-                        "type": "string"
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "crop_id",
+                        "in": "formData",
+                        "description": "Crop_id of the field",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
                     },
                     {  
                         "name": "token",
@@ -506,8 +700,32 @@
                     }
                 ],
                 "responses": {  
-                    "405": {  
-                        "description": "Invalid input"
+                    "200": {  
+                        "description": "Field created",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Field"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -532,7 +750,7 @@
                         "type": "string"
                     },
                     {  
-                        "name": "tractorId",
+                        "name": "id",
                         "in": "formData",
                         "description": "ID of field to update",
                         "required": true,
@@ -545,21 +763,57 @@
                         "description": "Updated name of field",
                         "required": true,
                         "type": "string"
+                    }, {  
+                        "name": "area",
+                        "in": "formData",
+                        "description": "Updated area of the field in square meters",
+                        "required": true,
+                        "type": "number"
                     },
                     {  
                         "name": "user_id",
                         "in": "formData",
-                        "description": "Updated user_id of field. User ID can only be updated by admin",
+                        "description": "Updated user_id of field. User ID can only be updated by admin, Value is ignored if customer passes this value",
                         "required": true,
-                        "type": "string"
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {  
+                        "name": "crop_id",
+                        "in": "formData",
+                        "description": "Updated crop_id of field",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
                     }
                 ],
                 "responses": {  
-                    "400": {  
-                        "description": "Invalid ID supplied"
+                    "200": {  
+                        "description": "Field updated",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/Field"
+                                }
+                            }
+                        }
                     },
-                    "404": {  
-                        "description": "Pet not found"
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -584,7 +838,7 @@
                         "type": "string"
                     },
                     {  
-                        "name": "tractorId",
+                        "name": "fieldId",
                         "in": "path",
                         "description": "ID of field to delete",
                         "required": true,
@@ -593,11 +847,29 @@
                     }
                 ],
                 "responses": {  
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
                     "400": {  
-                        "description": "Invalid ID supplied"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     },
                     "404": {  
-                        "description": "Pet not found"
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "200": {
+                        "description": "Field deleted",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMsg"
+                        }
                     }
                 }
             }
@@ -627,20 +899,31 @@
                     "200": {  
                         "description": "successful operation",
                         "schema": {  
-                            "type": "array",
-                            "items": {  
-                                "$ref": "#/definitions/Pet"
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {  
+                                        "$ref": "#/definitions/ProcessField"
+                                    }
+                                }
                             }
                         }
                     },
                     "400": {  
-                        "description": "Provided token is expired",
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
                         "schema": {  
-                            "type": "object",
-                            "items": {
-                                "status": "error",
-                                "message": "Provided token is expired"
-                            }
+                            "$ref": "#/definitions/ErrorMsg"
                         }
                     }
                 }
@@ -665,6 +948,12 @@
                         "description": "Token obtained from auth API",
                         "required": true,
                         "type": "string"
+                    }, {  
+                        "name": "area",
+                        "in": "formData",
+                        "description": "Area of the field to be proccessed in square meters",
+                        "required": true,
+                        "type": "number"
                     },
                     {  
                         "name": "date",
@@ -692,8 +981,32 @@
                     }
                 ],
                 "responses": {  
-                    "405": {  
-                        "description": "Invalid input"
+                    "200": {  
+                        "description": "Process field created",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/ProcessField"
+                                }
+                            }
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
@@ -732,6 +1045,12 @@
                         "required": true,
                         "type": "string",
                         "format": "date"
+                    }, {  
+                        "name": "area",
+                        "in": "formData",
+                        "description": "Updated area of the field to be proccessed in square meters",
+                        "required": true,
+                        "type": "number"
                     },
                     {  
                         "name": "field_id",
@@ -751,16 +1070,37 @@
                     }
                 ],
                 "responses": {  
-                    "400": {  
-                        "description": "Invalid ID supplied"
+                    "200": {  
+                        "description": "ProcessField updated",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "$ref": "#/definitions/ProcessField"
+                                }
+                            }
+                        }
                     },
-                    "404": {  
-                        "description": "Pet not found"
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {  
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
         },
-        "/process-fields/{fieldId}": {
+        "/process-fields/{processFieldId}": {
             "delete": {  
                 "tags": [  
                     "Process Fields"
@@ -789,23 +1129,41 @@
                     }
                 ],
                 "responses": {  
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
                     "400": {  
-                        "description": "Invalid ID supplied"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     },
                     "404": {  
-                        "description": "Pet not found"
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "200": {
+                        "description": "Process field deleted",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMsg"
+                        }
                     }
                 }
             }
-        },    
-        "/reports": {
-            "post": {  
+        },
+        "/process-fields/{processFieldId}/{status}": {
+            "put": {  
                 "tags": [  
-                    "Reports"
+                    "Process Fields"
                 ],
-                "summary": "Generate reports",
+                "summary": "Change process field status - Can only be used by supervisors & admin",
                 "description": "",
-                "operationId": "reports",
+                "operationId": "statusChange",
                 "produces": [  
                     "application/json"
                 ],
@@ -818,32 +1176,93 @@
                         "type": "string"
                     },
                     {  
-                        "name": "field_name",
+                        "name": "processFieldId",
                         "in": "path",
-                        "description": "Name of the field",
-                        "required": false,
+                        "description": "ID of process field request to delete",
+                        "required": true,
                         "type": "integer",
                         "format": "int64"
                     },
                     {  
-                        "name": "field_name",
+                        "name": "status",
                         "in": "path",
+                        "description": "Status of process field",
+                        "required": true,
+                        "type": "string",
+                        "enum": ["Pending", "Processed"]
+                    }
+                ],
+                "responses": {  
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "404": {  
+                        "description": "Invalid ID supplied",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "200": {
+                        "description": "Status changed",
+                        "schema": {
+                            "$ref": "#/definitions/SuccessMsg"
+                        }
+                    }
+                }
+            }
+        },    
+        "/reports": {
+            "post": {  
+                "tags": [  
+                    "Reports"
+                ],
+                "summary": "Generate reports - Only for admin users",
+                "description": "",
+                "operationId": "reports",
+                "produces": [  
+                    "application/json"
+                ],
+                "parameters": [  
+                    {  
+                        "name": "token",
+                        "in": "formData",
+                        "description": "Token obtained from auth API",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {  
+                        "name": "field_name",
+                        "in": "formData",
                         "description": "Name of the field",
                         "required": false,
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string"
+                    },
+                    {  
+                        "name": "tractor_name",
+                        "in": "formData",
+                        "description": "Name of the tractor",
+                        "required": false,
+                        "type": "string"
                     },
                     {  
                         "name": "culture",
-                        "in": "path",
+                        "in": "formData",
                         "description": "Crop name",
                         "required": false,
-                        "type": "string",
-                        "format": "date"
+                        "type": "string"
                     },
                     {  
                         "name": "start_date",
-                        "in": "path",
+                        "in": "formData",
                         "description": "Processing happened on or after this date",
                         "required": false,
                         "type": "string",
@@ -851,32 +1270,57 @@
                     },
                     {  
                         "name": "end_date",
-                        "in": "path",
+                        "in": "formData",
                         "description": "Processing happened on or before this date",
                         "required": false,
-                        "type": "integer",
+                        "type": "string",
                         "format": "date"
+                    },
+                    {  
+                        "name": "status",
+                        "in": "formData",
+                        "description": "Processing happened on or before this date",
+                        "required": false,
+                        "type": "string",
+                        "enum": ["Pending", "Processed"]
                     }
                 ],
                 "responses": {  
-                    "400": {  
-                        "description": "Invalid ID supplied"
+                    "200": {  
+                        "description": "successful operation",
+                        "schema": {  
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["success", "failed", "error"]
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {  
+                                        "$ref": "#/definitions/ReportObj"
+                                    }
+                                }
+                            }
+                        }
                     },
-                    "404": {  
-                        "description": "Pet not found"
+                    "401": {  
+                        "description": "Unauthorised access",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
+                    },
+                    "400": {  
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMsg"
+                        }
                     }
                 }
             }
         }
     },
-    "securityDefinitions": {  
-
-        "token": {  
-            "type": "apiKey",
-            "name": "token",
-            "in": "query"
-        }
-    },
+    "securityDefinitions": false,
     "definitions": {  
         "token": {
             "type": "object",
@@ -887,84 +1331,30 @@
             }
         },  
         "Crop": {
-            "crop": {  
-                "name": "photoUrl",
-                "wrapped": true
-            }
-        },
-        "Order": {  
             "type": "object",
             "properties": {  
                 "id": {  
                     "type": "integer",
                     "format": "int64"
                 },
-                "petId": {  
-                    "type": "integer",
-                    "format": "int64"
+                "name": {  
+                    "type": "string"
                 },
-                "quantity": {  
-                    "type": "integer",
-                    "format": "int32"
+                "status": {  
+                    "type": "string",
+                    "enum": ["Active", "Inactive"]
                 },
-                "shipDate": {  
+                "created_at": {  
                     "type": "string",
                     "format": "date-time"
                 },
-                "status": {  
+                "updated_at": {  
                     "type": "string",
-                    "description": "Order Status",
-                    "enum": [  
-                        "placed",
-                        "approved",
-                        "delivered"
-                    ]
-                },
-                "complete": {  
-                    "type": "boolean",
-                    "default": false
+                    "format": "date-time"
                 }
-            },
-            "xml": {  
-                "name": "Order"
             }
-        },
-        "User": {  
-            "type": "object",
-            "properties": {  
-                "id": {  
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "username": {  
-                    "type": "string"
-                },
-                "firstName": {  
-                    "type": "string"
-                },
-                "lastName": {  
-                    "type": "string"
-                },
-                "email": {  
-                    "type": "string"
-                },
-                "password": {  
-                    "type": "string"
-                },
-                "phone": {  
-                    "type": "string"
-                },
-                "userStatus": {  
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "User Status"
-                }
-            },
-            "xml": {  
-                "name": "User"
-            }
-        },
-        "Category": {  
+        },  
+        "Tractor": {
             "type": "object",
             "properties": {  
                 "id": {  
@@ -973,97 +1363,131 @@
                 },
                 "name": {  
                     "type": "string"
-                }
-            },
-            "xml": {  
-                "name": "Category"
-            }
-        },
-        "Tag": {  
-            "type": "object",
-            "properties": {  
-                "id": {  
-                    "type": "integer",
-                    "format": "int64"
                 },
-                "name": {  
+                "reg_number": {  
                     "type": "string"
-                }
-            },
-            "xml": {  
-                "name": "Tag"
-            }
-        },
-        "Pet": {  
-            "type": "object",
-            "required": [  
-                "name",
-                "photoUrls"
-            ],
-            "properties": {  
-                "id": {  
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "category": {  
-                    "$ref": "#/definitions/Category"
-                },
-                "name": {  
-                    "type": "string",
-                    "example": "doggie"
-                },
-                "photoUrls": {  
-                    "type": "array",
-                    "xml": {  
-                        "name": "photoUrl",
-                        "wrapped": true
-                    },
-                    "items": {  
-                        "type": "string"
-                    }
-                },
-                "tags": {  
-                    "type": "array",
-                    "xml": {  
-                        "name": "tag",
-                        "wrapped": true
-                    },
-                    "items": {  
-                        "$ref": "#/definitions/Tag"
-                    }
                 },
                 "status": {  
                     "type": "string",
-                    "description": "pet status in the store",
-                    "enum": [  
-                        "available",
-                        "pending",
-                        "sold"
-                    ]
+                    "enum": ["Active", "Inactive"]
+                },
+                "created_at": {  
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {  
+                    "type": "string",
+                    "format": "date-time"
                 }
-            },
-            "xml": {  
-                "name": "Pet"
             }
-        },
-        "ApiResponse": {  
+        },  
+        "Field": {
             "type": "object",
             "properties": {  
-                "code": {  
+                "id": {  
                     "type": "integer",
-                    "format": "int32"
+                    "format": "int64"
                 },
-                "type": {  
+                "name": {  
                     "type": "string"
+                },
+                "area": {  
+                    "type": "number"
+                },
+                "status": {  
+                    "type": "string",
+                    "enum": ["Active", "Inactive"]
+                },
+                "created_at": {  
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {  
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },  
+        "ProcessField": {
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "field_id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "tractor_id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "area": {  
+                    "type": "number"
+                },
+                "status": {  
+                    "type": "string",
+                    "enum": ["Pending", "Processed"]
+                },
+                "created_at": {  
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {  
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },  
+        "ReportObj": {
+            "type": "object",
+            "properties": {  
+                "id": {  
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "field_name": {  
+                    "type": "string"
+                },
+                "tractor_name": {  
+                    "type": "string"
+                },
+                "culture": {  
+                    "type": "string"
+                },
+                "area": {  
+                    "type": "number"
+                },
+                "status": {  
+                    "type": "string",
+                    "enum": ["Pending", "Processed"]
+                }
+            }
+        }, 
+        "ErrorMsg": {
+            "type": "object",
+            "properties": {  
+                "status": {  
+                    "type": "string",
+                    "enum": ["failed", "error", "success"]
+                },
+                "message": {  
+                    "type": "string"
+                }
+            }
+        }, 
+        "SuccessMsg": {
+            "type": "object",
+            "properties": {  
+                "status": {  
+                    "type": "string",
+                    "enum": ["success", "failed", "error"]
                 },
                 "message": {  
                     "type": "string"
                 }
             }
         }
-    },
-    "externalDocs": {  
-        "description": "Find out more about Swagger",
-        "url": "http://swagger.io"
     }
 }

@@ -131,23 +131,17 @@ class ProcessFieldsController extends BaseController {
         return response()->json($response);
     }
 
-    public function changeProcessFieldStatus(Request $request) {
+    public function changeProcessFieldStatus($id, $status) {
         try {
 
-            $validator = Validator::make($request->all(), [
-                        'id' => 'required|numeric|exists:process_fields,id',
-                        'status' => 'required|in:Pending,Processed']);
-
-            if ($validator->fails()) {
-                return response()->json(['status' => 'failed',
-                            'message' => 'Validation failed',
-                            'errors' => $validator->messages()]);
-            }
-            $process = ProcessField::where('id', $request->input("id"))->first();
+            $process = ProcessField::where('id', $id)->first();
             if (!isset($process->id)) {
                 throw new Exception('ProcessField not found');
             }
-            $process->status = trim($request->input("status"));
+            if(!in_array($status, ['Pending','Processed'])){
+                 throw new Exception('Invalid status');
+            }
+            $process->status = trim($status);
             $process->save();
 
             $response = ['status' => 'success',
