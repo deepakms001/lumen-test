@@ -1,14 +1,38 @@
-# Agriculture Process Management API with Swagger 
+# Agriculture Process Management API with Swagger UI
 
 This project contains APIs to manage agriculture process on fields and its documentation in Swagger
 
 Project consists of following features
   - Auth module
+  
+        - Basic Auth using JWT
   - Crops management 
+  
+        - Add / Edit / Delete / View operations.
+        - All users can view. 
+        - Add, Edit, Delete only by admin 
   - Fields management
+  
+        - Add / Edit / Delete / View operations.
+        - All users can view. 
+        - Users can add fields for them, cannot Add/Edit others. 
+        - Full permission for Admin 
   - Tractors management
+  
+        - Add / Edit / Delete / View operations.
+        - All users can view. 
+        - Add, Edit, Delete only by admin 
+
   - Process Fields
+
+        - Add / Edit / Delete / View operations.
+        - All users can view. 
+        - Users can add fields for them, cannot Add/Edit others. 
+        - Full permission for Admin & Supervisor
+        - Admin and Supervisor can change status from pending to processed
   - Reports
+
+        - Only for admin
 
 
 #### Prerequisites 
